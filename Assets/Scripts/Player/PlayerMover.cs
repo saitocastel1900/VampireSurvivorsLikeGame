@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerMover : MonoBehaviour
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public IObservable<Vector3> OnMove => _moveSubject;
     private readonly Subject<Vector3> _moveSubject = new Subject<Vector3>();
     
@@ -41,11 +44,11 @@ public class PlayerMover : MonoBehaviour
     {
         _inputProvider
             .IsRun
-            .Subscribe(isRun=> _moveSpeed = isRun ? _runSpeed : _walkSpeed)
+            .Subscribe(isRun => _moveSpeed = isRun ? _runSpeed : _walkSpeed)
             .AddTo(this.gameObject);
         
         _inputProvider
-            .MoveInputValue
+            .MoveDirection
             .Subscribe(x=>_moveDirection = new Vector3(x.x,0,x.y))
             .AddTo(this.gameObject);
 

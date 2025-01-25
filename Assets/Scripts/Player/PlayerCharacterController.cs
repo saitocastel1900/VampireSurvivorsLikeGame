@@ -1,6 +1,5 @@
 using UniRx;
 using UnityEngine;
-using Observable = UniRx.Observable;
 
 public class PlayerCharacterController : MonoBehaviour
 {
@@ -12,17 +11,30 @@ public class PlayerCharacterController : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
+    [SerializeField] private PlayerAnimator _animator;
+
+    /// <summary>
+    /// 
+    /// </summary>
     private Vector3 _moveDirection;
     
     private void Start()
     {
         Observable
             .EveryFixedUpdate()
+            .Where(_=>_animator.IsAttack.Value == false)
             .Subscribe(_ =>
             {
                 _rigidbody.AddForce(_moveDirection,ForceMode.Acceleration);
                 _rigidbody.velocity = _moveDirection;
             })
+            .AddTo(this.gameObject);
+
+        _animator
+            .IsAttack
+            .DistinctUntilChanged()
+            .Where(x => x == true)
+            .Subscribe(_=>_rigidbody.velocity = Vector3.zero)
             .AddTo(this.gameObject);
     }
 
